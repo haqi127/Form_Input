@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input Hasil Observasi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdfdfd;
+            --header-pink: #e499e2;
+            --body-pink: #eab4e8;
+            --inner-purple: #9b7297;
+            --input-dark-purple: #6a1b64;
+            --submit-green: #76bc21;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--body-pink);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: var(--header-pink);
+            padding: 25px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            border-bottom: 3px solid rgba(0,0,0,0.05);
+        }
+
+        .form-body {
+            padding: 20px;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Styling Dropdown dan Input Utama */
+        .input-main {
+            width: 100%;
+            background-color: var(--input-dark-purple);
+            border: none;
+            border-radius: 6px;
+            padding: 14px;
+            color: white;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            appearance: none; /* Menghilangkan panah default browser */
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        /* Container untuk dropdown agar ada indikator panah kustom jika mau */
+        .select-wrapper {
+            position: relative;
+        }
+
+        #dynamic-container {
+            background-color: var(--inner-purple);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .q-group {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed rgba(255,255,255,0.3);
+        }
+
+        .q-group:last-child { border-bottom: none; margin-bottom: 0; }
+
+        .input-light {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        textarea.input-light {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .btn-add {
+            background: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            font-size: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px auto 0;
+            color: #444;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover { background: #f0f0f0; }
+
+        .btn-submit {
+            background-color: var(--submit-green);
+            color: white;
+            border: none;
+            width: 60%;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #5e961a;
+        }
+
+        .btn-submit:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #5e961a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">FORM INPUT HASIL OBSERVASI</div>
+    
+    <div class="form-body">
+        <label class="label">Manajemen Bagian</label>
+        <select id="manajemen" class="input-main">
+            <option value="" disabled selected>Pilih Bagian...</option>
+            <option value="Kepala Sekolah">Kepala Sekolah</option>
+            <option value="Kesiswaan">Kesiswaan</option>
+            <option value="Kurikulum">Kurikulum</option>
+            <option value="Tata Usaha">Tata Usaha</option>
+            <option value="Keuangan/Bendahara">Keuangan/Bendahara</option>
+            <option value="Sarana dan Prasarana">Sarana dan Prasarana</option>
+        </select>
+
+        <div id="dynamic-container">
+            <div class="q-group">
+                <label class="label" style="color: #f0f0f0;">Pertanyaan</label>
+                <input type="text" class="input-light pertanyaan" placeholder="Tulis pertanyaan...">
+                
+                <label class="label" style="color: #f0f0f0;">Jawaban</label>
+                <textarea class="input-light jawaban" placeholder="Tulis jawaban detail..."></textarea>
+            </div>
+        </div>
+
+        <button type="button" class="btn-add" onclick="addQuestion()" title="Tambah Pertanyaan">+</button>
+    </div>
+
+    <button type="button" class="btn-submit" onclick="sendToTelegram()">Submit</button>
+</div>
+
+<script>
+    // Konfigurasi Bot Telegram
+    const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+    const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';
+
+    function addQuestion() {
+        const container = document.getElementById('dynamic-container');
+        const div = document.createElement('div');
+        div.className = 'q-group';
+        div.innerHTML = `
+            <label class="label" style="color: #f0f0f0;">Pertanyaan</label>
+            <input type="text" class="input-light pertanyaan" placeholder="Tulis pertanyaan...">
+            <label class="label" style="color: #f0f0f0;">Jawaban</label>
+            <textarea class="input-light jawaban" placeholder="Tulis jawaban detail..."></textarea>
+        `;
+        container.appendChild(div);
+    }
+
+    async function sendToTelegram() {
+        const manajemen = document.getElementById('manajemen').value;
+        const pertanyaans = document.querySelectorAll('.pertanyaan');
+        const jawabans = document.querySelectorAll('.jawaban');
+
+        if(!manajemen) {
+            alert("Mohon pilih Manajemen Bagian terlebih dahulu.");
+            return;
+        }
+
+        // Format Teks Telegram (Tanpa Emoji, Fokus pada Format Teks)
+        let pesan = `<b>LAPORAN HASIL OBSERVASI</b>\n`;
+        pesan += `==========================\n`;
+        pesan += `MANAJEMEN: <code>${manajemen.toUpperCase()}</code>\n`;
+        pesan += `WAKTU: <i>${new Date().toLocaleString('id-ID')}</i>\n`;
+        pesan += `==========================\n\n`;
+
+        pertanyaans.forEach((q, index) => {
+            const valQ = q.value || "-";
+            const valA = jawabans[index].value || "-";
+            
+            pesan += `<b>DATA KE-${index + 1}</b>\n`;
+            pesan += `PERTANYAAN: <i>${valQ}</i>\n`;
+            pesan += `JAWABAN: <code>${valA}</code>\n`;
+            pesan += `--------------------------\n`;
+        });
+
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: pesan,
+                    parse_mode: 'HTML'
+                })
+            });
+
+            if (response.ok) {
+                alert("Data berhasil dikirim ke Telegram.");
+                location.reload(); 
+            } else {
+                alert("Gagal mengirim data. Periksa Token/Chat ID.");
+            }
+        } catch (error) {
+            alert("Error: " + error.message);
+        }
+    }
+</script>
+
+</body>
+</html>
